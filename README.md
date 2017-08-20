@@ -15,9 +15,11 @@ Running it requires the [Flask](http://flask.pocoo.org/) module.
 
 Now you can browse to host:8999 (you can config this using --port) to see files under the running directory. You can click on the "open in code editor" link to edit a file. The changes you make will automatically (and *ALWAYS*) be saved on the host after a short delay for your every change.
 
-Put the files you want to allow remote modification under the project directory, or put symbolic links for them. It is recommended that you create links under the *links* directory.
+Put the files you want to allow remote modification under the `links` directory:
+> $ ln -s <your_project_directory> links/
 
-The following interfaces are supported:
+## URL APIs
+The following URL paths/parameters are supported:
 
 * /_path_: This displays the content of a file or a directory with the given (relative) path.
 
