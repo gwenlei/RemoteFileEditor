@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Remote File Editor</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="/editor/editor.css">
+
+<script src="/bower_components/code-mirror/lib/codemirror.js"></script>
+<link href="/bower_components/code-mirror/lib/codemirror.css" rel="stylesheet">
+
+<link href="/bower_components/code-mirror/theme/ambiance.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/ambiance-mobile.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/blackboard.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/cobalt.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/eclipse.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/elegant.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/erlang-dark.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/lesser-dark.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/midnight.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/monokai.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/neat.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/night.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/rubyblue.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/solarized.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/twilight.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/vibrant-ink.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/xq-dark.css" rel="stylesheet">
+<link href="/bower_components/code-mirror/theme/xq-light.css" rel="stylesheet">
+
+<script src="/bower_components/code-mirror/mode/css/css.js"></script>
+<script src="/bower_components/code-mirror/mode/clike/clike.js"></script>
+<script src="/bower_components/code-mirror/mode/go/go.js"></script>
+<script src="/bower_components/code-mirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/bower_components/code-mirror/mode/javascript/javascript.js"></script>
+<script src="/bower_components/code-mirror/mode/lua/lua.js"></script>
+<script src="/bower_components/code-mirror/mode/markdown/markdown.js"></script>
+<script src="/bower_components/code-mirror/mode/octave/octave.js"></script>
+<script src="/bower_components/code-mirror/mode/python/python.js"></script>
+<script src="/bower_components/code-mirror/mode/r/r.js"></script>
+<script src="/bower_components/code-mirror/mode/shell/shell.js"></script>
+<script src="/bower_components/code-mirror/mode/xml/xml.js"></script>
+
+<script src="/bower_components/code-mirror/keymap/sublime.js"></script>
+
+<!--For Addon-->
+<script src="/bower_components/code-mirror/addon/comment/comment.js"></script>
+<script src="/bower_components/code-mirror/addon/comment/continuecomment.js"></script>
+
+<link href="/bower_components/code-mirror/addon/dialog/dialog.css" rel="stylesheet">
+<script src="/bower_components/code-mirror/addon/dialog/dialog.js"></script>
+
+<script src="/bower_components/code-mirror/addon/display/rulers.js"></script>
+
+<script src="/bower_components/code-mirror/addon/edit/closebrackets.js"></script>
+<script src="/bower_components/code-mirror/addon/edit/closetag.js"></script>
+<script src="/bower_components/code-mirror/addon/edit/matchbrackets.js"></script>
+
+<link href="/bower_components/code-mirror/addon/hint/show-hint.css" rel="stylesheet">
+<script src="/bower_components/code-mirror/addon/hint/anyword-hint.js"></script>
+<script src="/bower_components/code-mirror/addon/hint/css-hint.js"></script>
+<script src="/bower_components/code-mirror/addon/hint/html-hint.js"></script>
+<script src="/bower_components/code-mirror/addon/hint/javascript-hint.js"></script>
+<script src="/bower_components/code-mirror/addon/hint/show-hint.js"></script>
+<script src="/bower_components/code-mirror/addon/hint/xml-hint.js"></script>
+
+<link href="/bower_components/code-mirror/addon/scroll/simplescrollbars.css" rel="stylesheet">
+<script src="/bower_components/code-mirror/addon/scroll/annotatescrollbar.js"></script>
+<script src="/bower_components/code-mirror/addon/scroll/simplescrollbars.js"></script>
+
+<link href="/bower_components/code-mirror/addon/search/matchesonscrollbar.css" rel="stylesheet">
+<script src="/bower_components/code-mirror/addon/search/match-highlighter.js"></script>
+<script src="/bower_components/code-mirror/addon/search/matchesonscrollbar.js"></script>
+<script src="/bower_components/code-mirror/addon/search/search.js"></script>
+<script src="/bower_components/code-mirror/addon/search/searchcursor.js"></script>
+
+<script src="/bower_components/marked/lib/marked.js"></script>
+</head>
+<body>
+    <div id="header">
+        <span id="title">[Mode: unknown] File name unknown.</span>
+        <span id="saveIconContainer">
+            <img id="saveIcon" src="/editor/edit_icon.png" alt="SAVE">
+        </span>
+    </div>
+    <div id="panel">
+        <span id="editorContainer"></span>
+        <span id="markdownDisplay"></span>
+    </div>
+    <script src="/editor/utils.js"></script>
+    <script src="/editor/call_buffer.js"></script>
+    <script src="/editor/editor.js"></script>
+</body>
+</html>

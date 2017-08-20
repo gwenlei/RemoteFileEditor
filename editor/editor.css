@@ -1,0 +1,56 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+#header {
+    background-color: rgba(150, 72, 96, 1);
+    color: #FFF;
+    font-size: 22px;
+    height: 70px;
+}
+
+#header span {
+    display: inline-block;
+    padding: 25px;
+}
+
+#title {
+    max-width: calc(100% - 140px);
+}
+
+#saveIconContainer {
+    float: right;
+}
+
+img {
+    height: 24px;
+    -webkit-filter: invert(100%);
+}
+
+#panel {
+    display: block;
+    height: calc(100% - 70px);
+    width: 100%;
+}
+
+#editorContainer {
+    float: left;
+    height: calc(100% - 70px);
+    position: absolute;
+}
+
+#markdownDisplay {
+    background-color: #EBF0FF;
+    color: #0f0f0f;
+    float: right;
+    height: calc(100% - 70px);
+    margin: 0;
+    overflow-y: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 5px;
+    position: absolute;
+    top: 70px;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "RemoteFileEditor",
+  "homepage": "https://github.com/ChihChiu29/RemoteFileEditor",
+  "authors": [
+    "ChihChiu29 <Chih.Chiu.19@gmail.com>"
+  ],
+  "description": "Edit file remotely.",
+  "main": "README.md",
+  "keywords": [
+    "remote",
+    "code mirror",
+    "file edit"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "jquery/jquery",
+    "code-mirror": "codemirror/codemirror",
+    "marked": "chjj/marked#~0.3.3"
+  }
+}
