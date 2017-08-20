@@ -1,7 +1,4 @@
-# Remote File Editor (Non-Polymer)
-(Version 0.4.7; forked from RemoteFileEditor(Polymer) version 0.2)
-
-## What is remote file editor?
+# Remote File Editor
 Remote file editor allows editing ASCII text files remotely on a host using a web interface with syntax highlighting.
 
 ## How to use it?
@@ -12,11 +9,11 @@ If you do not want to use bower, you can also unzip bower_components.zip to
 provide all the components files.
 
 Then just run the server on your host using:
-> $ python remote_file_editor.py
+> $ ./startme.sh
 
-Running it requires the [Flask](http://flask.pocoo.org/) module. If you do not want to install it globally you can also simply unzip flask.zip.
+Running it requires the [Flask](http://flask.pocoo.org/) module.
 
-Now you can browse to host:9000 (you can config this using --port) to see files under the running directory. You can click on the "open in code editor" link to edit a file. The changes you make will automatically (and *ALWAYS*) be saved on the host after a short delay for your every change.
+Now you can browse to host:8999 (you can config this using --port) to see files under the running directory. You can click on the "open in code editor" link to edit a file. The changes you make will automatically (and *ALWAYS*) be saved on the host after a short delay for your every change.
 
 Put the files you want to allow remote modification under the project directory, or put symbolic links for them. It is recommended that you create links under the *links* directory.
 
@@ -39,7 +36,6 @@ The following interfaces are supported:
 ## Currently known issues
 * Only ASCII text files are supported; opening images etc. will result in errors.
 * Editing the same file from multiple clients is NOT supported --- whoever saves later wins.
-* The file transfer is NOT encrypted.
 
 ## Question/Suggestion?
 Email chih.chiu.19@gmail.com
