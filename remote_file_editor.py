@@ -2,6 +2,9 @@
 import argparse
 import io
 import os
+import packer
+import threading  
+import time 
 
 from flask import Flask, Response, request
 
@@ -221,6 +224,43 @@ def make_directory():
         return Response('Directory %s created.' % file_path, 200)
     except OSError as e:
         print '[Error] Delete error: %s' % str(e)
+        return Response(str(e), 500)
+
+
+class packerthread(threading.Thread): 
+    def __init__(self, file_path):  
+        threading.Thread.__init__(self)  
+        self.file_path = file_path  
+        self.thread_stop = False  
+   
+    def run(self): 
+        while not self.thread_stop:  
+            print 'packer file_path:%s\n' %(self.file_path)
+            packerfile = str(self.file_path)
+            print 'packerfile:[%s]\n' %(packerfile)
+            exc = []
+            only = []
+            vars = {}
+            var_file = ''
+            packer_exec_path = '/home/packerdir/packer'
+            p = packer.Packer(packerfile, exc=exc, only=only, vars=vars,var_file=var_file, exec_path=packer_exec_path)
+            p.build(parallel=True, debug=False, force=False)  
+    def stop(self):  
+        self.thread_stop = True
+
+@app.route('/packer', methods=['GET'])
+def packer_build():
+    file_path = request.args['file']
+    if not check_file_path_validity(file_path):
+        return Response('Permission denied', 403)
+
+    try:
+        thread1 = packerthread(file_path) 
+        thread1.start() 
+        print '[Info] packer build %s' % file_path
+        return Response('packer building %s .' % file_path, 200)
+    except OSError as e:
+        print '[Error] packer build error: %s' % str(e)
         return Response(str(e), 500)
 
 

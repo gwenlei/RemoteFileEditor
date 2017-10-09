@@ -1,0 +1,41 @@
+{
+    "variables": {
+        "password": "SSH_PASSWORD",
+        "disk_size": "DISK_SIZE"
+    },
+    "builders": [
+        {
+            "name": "win7",
+	    "vm_name": "VM_NAME",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+	    "headless": HEADLESS,
+	    "output_directory": "OUTPUT_DIRECTORY",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "ISO_URL",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "ISO_CHECKSUM",
+            "ssh_username": "SSH_USERNAME",
+            "ssh_password": "SSH_PASSWORD",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "5s",
+            "floppy_files": [
+                "WIN_CFG",
+                "FLOPPYDIR/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "FLOPPYDIR/common/*",
+                "FLOPPYDIR/ps/*",
+                "FLOPPYDIR/windows-2012-standard-amd64/*"
+            ]
+
+        }
+    ],
+  "post-processors": [
+    {
+      "output": "OUTPUT_DIRECTORYVM_NAME.vhd",
+      "type": "vhd",
+      "keep_input_artifact": true
+    }
+  ]
+}

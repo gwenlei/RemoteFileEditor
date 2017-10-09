@@ -1,0 +1,42 @@
+{
+  "builders":
+  [
+    {
+      "type": "qemu",
+      "iso_url":"ISO_URL",
+      "iso_checksum": "ISO_CHECKSUM",
+      "iso_checksum_type": "md5",
+      "output_directory": "OUTPUT_DIRECTORY",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "sed -i \"s/vmlinuz.*/& net.ifnames=0/g\" /boot/grub2/grub.cfg && shutdown -P now",
+      "disk_size": DISK_SIZE,
+      "format": "qcow2",
+      "headless": HEADLESS,
+      "accelerator": "kvm",
+      "http_directory": "httpdir",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "SSH_USERNAME",
+      "ssh_password": "SSH_PASSWORD",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "vm_name": "VM_NAME",
+      "net_device": "virtio-net",
+      "disk_interface": "ide",
+      "qemuargs": [
+        ["-m","768"]
+      ],
+      "boot_wait": "5s",
+      "boot_command":
+      [
+       "<esc><enter><wait>",
+       "linux netsetup=dhcp lang=en_US hostname=build netdevice=eth0",
+       " addswap=0 autoyast=KS_CFG ",
+       " textmode=1 insecure=1<wait><enter><wait>"
+      ]
+    }
+  ]
+
+

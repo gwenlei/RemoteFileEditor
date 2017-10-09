@@ -1,0 +1,47 @@
+{
+    "variables": {
+        "user": "SSH_USERNAME",
+        "password": "SSH_PASSWORD"
+    },
+    "builders":
+    [
+        {
+            "vm_name": "VM_NAME",
+            "type": "qemu",
+            "format": "qcow2",
+            "accelerator": "kvm",
+            "disk_size": DISK_SIZE,
+            "iso_url":"ISO_URL",
+            "iso_checksum": "ISO_CHECKSUM",
+            "iso_checksum_type": "md5",
+	    "output_directory": "OUTPUT_DIRECTORY",
+            "http_directory": "http",
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "90m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+            "qemuargs": [
+               [ "-m", "512M" ]
+             ],
+            "boot_wait": "2s",
+            "floppy_files": [
+                "FLOPPY_CFG"
+            ],  
+            "boot_command": [
+                "<esc><esc><enter><wait>",
+                "/install/vmlinuz preseed/file=KS_CFG ",
+                "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+                "hostname=localhost ",
+                "keyboard-configuration/modelcode=SKIP ",
+                "keyboard-configuration/layout=USA ",
+                "keyboard-configuration/variant=USA ",
+                "passwd/user-fullname={{user `user`}} ",
+                "passwd/user-password-again={{user `password`}} ",
+                "passwd/user-password={{user `password`}} ",
+                "passwd/username={{user `user`}} ",
+                "initrd=/install/initrd.gz -- <enter>"
+            ]
+        }
+    ]
+SCRIPTFILES
+}

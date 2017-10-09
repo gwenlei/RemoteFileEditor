@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+<settings pass="windowsPE">
+    <!-- look for drivers on floppy -->
+    <component name="Microsoft-Windows-PnpCustomizationsWinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <DriverPaths>
+        <PathAndCredentials wcm:keyValue="1" wcm:action="add">
+          <Path>A:\</Path>
+        </PathAndCredentials>
+      </DriverPaths>
+    </component>
+<component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<SetupUILanguage>
+<UILanguage>zh-CN</UILanguage>
+</SetupUILanguage>
+<InputLocale>zh-CN</InputLocale>
+<SystemLocale>zh-CN</SystemLocale>
+<UILanguage>zh-CN</UILanguage>
+<UserLocale>zh-CN</UserLocale>
+</component>
+    <component xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <DiskConfiguration>
+        <Disk wcm:action="add">
+          <CreatePartitions>
+PARTITONADD
+          </CreatePartitions>
+          <ModifyPartitions>
+PARTITONMODIFY
+          </ModifyPartitions>
+          <DiskID>0</DiskID>
+          <WillWipeDisk>true</WillWipeDisk>
+        </Disk>
+      </DiskConfiguration>
+      <ImageInstall>
+        <OSImage>
+          <InstallFrom>
+            <MetaData wcm:action="add">
+              <Key>/IMAGE/NAME </Key>
+              <Value>Windows 7 ULTIMATE</Value>
+            </MetaData>
+          </InstallFrom>
+          <InstallTo>
+            <DiskID>0</DiskID>
+            <PartitionID>1</PartitionID>
+          </InstallTo>
+        </OSImage>
+      </ImageInstall>
+
+
+<UserData>
+<ProductKey>
+<WillShowUI>OnError</WillShowUI>
+<Key></Key>
+</ProductKey>
+<AcceptEula>true</AcceptEula>
+</UserData>
+</component>
+</settings>
+<settings pass="specialize">
+<component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<ComputerName>*</ComputerName>
+<TimeZone>China Standand Time</TimeZone>
+</component>
+<component name="Microsoft-Windows-Security-Licensing-SLC-UX" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<SkipAutoActivation>true</SkipAutoActivation>
+</component>
+</settings>
+<settings pass="oobeSystem">
+<component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <!-- logon this user automatically 
+                      which runs first logon commands -->
+      <AutoLogon>
+        <Password>
+          <Value>SSH_PASSWORD</Value>
+          <PlainText>true</PlainText>
+        </Password>
+        <Enabled>true</Enabled>
+        <Username>SSH_USERNAME</Username>
+      </AutoLogon>
+
+      <FirstLogonCommands>
+
+        <SynchronousCommand wcm:action="add">
+          <CommandLine>cmd.exe /c C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File a:\winrm.ps1</CommandLine>
+          <Description>Run configure script</Description>
+          <Order>1</Order>
+        </SynchronousCommand>
+
+      </FirstLogonCommands>
+
+      <OOBE>
+        <HideEULAPage>true</HideEULAPage>
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <NetworkLocation>Home</NetworkLocation>
+        <ProtectYourPC>1</ProtectYourPC>
+        <SkipMachineOOBE>true</SkipMachineOOBE>
+        <SkipUserOOBE>true</SkipUserOOBE>
+      </OOBE>
+
+      <UserAccounts>
+
+        <AdministratorPassword>
+          <Value>SSH_PASSWORD</Value>
+          <PlainText>true</PlainText>
+        </AdministratorPassword>
+
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <DisplayName>SSH_USERNAME</DisplayName>
+                        <Group>Administrators</Group>
+                        <Name>SSH_USERNAME</Name>
+                        <Password>
+                            <Value>SSH_PASSWORD</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+                    </LocalAccount>
+                </LocalAccounts>
+      </UserAccounts>
+
+<TimeZone>China Standand Time</TimeZone>
+</component>
+</settings>
+<cpi:offlineImage cpi:source="" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>

@@ -1,0 +1,65 @@
+#platform=x86, AMD64, or Intel EM64T
+#version=DEVEL
+# Firewall configuration
+firewall --enabled --ssh --service=ssh
+# Install OS instead of upgrade
+install
+# Use CDROM installation media
+cdrom
+
+rootpw SSH_PASSWORD 
+authconfig --enableshadow --passalgo=sha512
+
+# System keyboard
+keyboard us
+# System language
+lang en_GB.UTF-8
+# SELinux configuration
+selinux --enforcing
+# Do not configure the X Window System
+skipx
+# Installation logging level
+logging --level=info
+
+# Reboot after installation
+reboot
+
+# System timezone
+timezone --isUtc Asia/Shanghai
+# Network information
+network  --bootproto=dhcp --device=eth0 --onboot=on
+# System bootloader configuration
+bootloader --append="crashkernel=auto rhgb quiet" --location=mbr --driveorder="vda"
+
+cmdline
+# Partition clearing information
+zerombr
+clearpart --all  --drives=vda
+
+# Disk partitioning information
+part /boot --fstype="ext4" --size=500
+part pv.008002 --grow --size=1
+volgroup vg_centos --pesize=4096 pv.008002
+logvol / --fstype=ext4 --name=lv_root --vgname=vg_centos --grow --size=1024 --maxsize=51200
+logvol swap --name=lv_swap --vgname=vg_centos --grow --size=1024 --maxsize=1024
+
+%packages --nobase
+coreutils
+yum
+rpm
+e2fsprogs
+lvm2
+grub
+sysstat
+ntp
+openssh-server
+openssh-clients
+%end
+
+%post
+sed -i "s/^HWADDR.*$//g" /etc/sysconfig/network-scripts/ifcfg-eth0
+cd /etc/udev/rules.d
+rm -f 70-persistent-net.rules
+rm -f 75-persistent-net-generator.rules
+echo "# " > 75-persistent-net-generator.rules
+%end

@@ -1,0 +1,16 @@
+MOUNT-DISKIMAGE C:\win\virtio-win-0.1.102.iso
+
+pnputil -i -a D:\vioserial\w8\amd64\vioser.inf
+pnputil -i -a D:\viostor\w8\amd64\viostor.inf
+pnputil -i -a D:\viorng\w8\amd64\viorng.inf
+pnputil -i -a D:\vioscsi\w8\amd64\vioscsi.inf
+pnputil -i -a D:\Balloon\w8\amd64\balloon.inf
+pnputil -i -a D:\NetKVM\w8\amd64\netkvm.inf
+pnputil -i -a D:\qemupciserial\qemupciserial.inf
+
+
+$msi = @("D:\guest-agent\qemu-ga-x64.msi")
+foreach($_ in $msi)
+{
+  Start-Process -FilePath msiexec -ArgumentList /i, $_, /qn -Wait
+}

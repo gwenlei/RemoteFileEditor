@@ -1,0 +1,75 @@
+{
+    "variables": {
+        "user": "SSH_USERNAME",
+        "password": "SSH_PASSWORD"
+    },
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+          "scripts": [
+            "template/script/ubuntu1604/ansible.sh"
+          ]
+    },
+    {   
+      "type": "ansible-local",
+      "playbook_file": "static/ansible/main.yml",
+      "role_paths": [
+        "static/ansible/roles/tomcat4u"
+      ]   
+    }
+  ],
+    "builders":
+    [
+        {
+            "vm_name": "VM_NAME",
+            "type": "qemu",
+            "format": "qcow2",
+            "output_directory": "OUTPUT_DIRECTORY",
+            "accelerator": "kvm",
+            "disk_size": DISK_SIZE,
+            "headless": HEADLESS,
+            "iso_url":"ISO_URL",
+            "iso_checksum": "ISO_CHECKSUM",
+            "iso_checksum_type": "md5",
+            "http_directory": "CFGDIR",
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "90m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+	    "qemuargs": [
+	       [ "-m", "512M" ]
+	     ],
+            "net_device": "virtio-net",
+            "disk_interface": "virtio",
+            "boot_wait": "2s",
+            "boot_command": [
+        "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "/install/vmlinuz<wait>",
+        " auto<wait>",
+        " console-setup/ask_detect=false<wait>",
+        " console-setup/layoutcode=us<wait>",
+        " console-setup/modelcode=pc105<wait>",
+        " debconf/frontend=noninteractive<wait>",
+        " debian-installer=en_US<wait>",
+        " fb=false<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " kbd-chooser/method=us<wait>",
+        " keyboard-configuration/layout=USA<wait>",
+        " keyboard-configuration/variant=USA<wait>",
+        " locale=en_US<wait>",
+        " netcfg/get_domain=vm<wait>",
+        " netcfg/get_hostname=vagrant<wait>",
+        " grub-installer/bootdev=/dev/vda<wait>",
+        " noapic<wait>",
+        " net.ifnames=0 ",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/KS_CFG",
+        " -- <wait>",
+        "<enter><wait>"
+            ]
+        }
+    ]
+}

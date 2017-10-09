@@ -1,0 +1,46 @@
+{
+    "variables": {
+        "password": "SSH_PASSWORD",
+        "disk_size": "DISK_SIZE"
+    },
+    "builders": [
+        {
+	    "vm_name":"VM_NAME",
+            "name": "windows-2008R2zw",
+	    "output_directory":"OUTPUT_DIRECTORY",
+            "type": "virtualbox-iso",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "ISO_URL",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "ISO_CHECKSUM",
+      "communicator": "winrm",
+      "winrm_username": "SSH_USERNAME",
+      "winrm_password": "SSH_PASSWORD",
+      "winrm_port": "55985",
+      "winrm_timeout": "8h",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "2s",
+	    "headless":"HEADLESS",
+            "floppy_files": [
+                "WIN_CFG",
+                "FLOPPYDIR/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "FLOPPYDIR/win2008r2x64/*"
+            ],
+      "guest_additions_mode": "disable",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ],
+        [ "modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,55985,,5985" ]
+      ],
+      "guest_os_type": "Windows2008_64",
+      "hard_drive_interface": "sata"
+        }
+    ],
+  "post-processors": [
+    {
+      "output": "OUTPUT_DIRECTORYVM_NAME.vhd",
+      "type": "vhd",
+      "keep_input_artifact": true
+    }
+  ]
+}

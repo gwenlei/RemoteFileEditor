@@ -1,0 +1,46 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url":"ISO_URL",
+      "iso_checksum": "ISO_CHECKSUM",
+      "iso_checksum_type": "md5",
+      "output_directory": "OUTPUT_DIRECTORY",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "shutdown -P now",
+      "disk_size": DISK_SIZE,
+      "headless": HEADLESS,
+      "http_directory": "CFGDIR",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "SSH_USERNAME",
+      "ssh_password": "SSH_PASSWORD",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "vm_name": "VM_NAME",
+      "boot_wait": "5s",
+      "boot_command":
+      [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/KS_CFG <enter><wait>"
+      ],
+      "guest_additions_mode": "disable",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+      ],
+      "guest_os_type": "RedHat_64",
+      "hard_drive_interface": "sata"
+    }
+  ]
+,
+  "post-processors": [
+    {
+      "output": "OUTPUT_DIRECTORYVM_NAME.vhd",
+      "type": "vhd",
+      "keep_input_artifact": true
+    }
+  ]
+SCRIPTFILES
+}

@@ -1,0 +1,66 @@
+{
+    "variables": {
+        "user": "SSH_USERNAME",
+        "password": "SSH_PASSWORD"
+    },
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+          "scripts": [
+            "template/script/ubuntu1604/ansible.sh"
+          ]
+    },
+    {   
+      "type": "ansible-local",
+      "playbook_file": "static/ansible/main.yml",
+      "role_paths": [
+        "static/ansible/roles/tomcat4u"
+      ]   
+    }
+  ],
+    "builders":
+    [
+        {
+            "vm_name": "VM_NAME",
+            "type": "qemu",
+            "format": "qcow2",
+            "output_directory": "OUTPUT_DIRECTORY",
+            "accelerator": "kvm",
+            "disk_size": DISK_SIZE,
+            "headless": HEADLESS,
+            "iso_url":"ISO_URL",
+            "iso_checksum": "ISO_CHECKSUM",
+            "iso_checksum_type": "md5",
+            "http_directory": "CFGDIR",
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "90m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+	    "qemuargs": [
+	       [ "-m", "512M" ]
+	     ],
+            "boot_wait": "5s",
+            "boot_command": [
+        "<enter><wait>",
+        "<f6><esc>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz ",
+        "initrd=/install/initrd.gz ",
+        "auto=true ",
+        "priority=critical ",
+        "net.ifnames=0 ",
+        "url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/KS_CFG",
+        "<wait><enter>"
+            ]
+        }
+    ]
+}

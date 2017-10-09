@@ -8,9 +8,9 @@ First install all the bower components by running:
 If you do not want to use bower, you can also unzip bower_components.zip to
 provide all the components files.
 
-Then just run the server on your host using:
+Then just run the server on your fhost using:
 > $ ./startme.sh
-
+fgdsgfhhh
 Running it requires the [Flask](http://flask.pocoo.org/) module.
 
 Now you can browse to host:8999 (you can config this using --port) to see files under the running directory. You can click on the "open in code editor" link to edit a file. The changes you make will automatically (and *ALWAYS*) be saved on the host after a short delay for your every change.

@@ -1,0 +1,15 @@
+disksize:50 
+templateostype:centos%6.5%64 
+buildtype:qemu 
+part:C 
+size:48 
+bzip2:No 
+templatename:templatename 
+password:engine 
+ostype:Windows7qga 
+vmname:Windows7qga.qcow2 
+settingfile:static/data/dataqemu.json 
+headless:false 
+setcloudstack:static/data/setcloudstack.json 
+templatedisplaytext:templatedisplaytext 
+user:Administrator 

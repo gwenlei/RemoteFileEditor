@@ -1,0 +1,23 @@
+[1;32mwin7 output will be in this color.[0m
+
+[1;32m==> win7: Downloading or copying ISO[0m
+[0;32m    win7: Downloading or copying: file:///home/html/iso/cn_windows_7_ultimate_with_sp1_x64_dvd_618537.iso[0m
+[1;32m==> win7: Creating floppy disk...[0m
+[0;32m    win7: Copying: static/result/20170915111030/cfg/Autounattend.xml[0m
+[0;32m    win7: Copying: static/result/20170915111030/floppyqga/drivers/virtio-win-0.1-81/WIN7/AMD64/*[0m
+[0;32m    win7: Copying: static/result/20170915111030/floppyqga/common/*[0m
+[0;32m    win7: Copying: static/result/20170915111030/floppyqga/ps/*[0m
+[0;32m    win7: Copying: static/result/20170915111030/floppyqga/qga/*[0m
+[0;32m    win7: Copying: static/result/20170915111030/floppyqga/windows-2012-standard-amd64/*[0m
+[1;32m==> win7: Creating hard drive...[0m
+[1;32m==> win7: Found port for SSH: 3499.[0m
+[1;32m==> win7: Looking for available port between 5900 and 6000[0m
+[1;32m==> win7: Found available VNC port: 5987[0m
+[1;32m==> win7: Starting VM, booting from CD-ROM[0m
+[1;32m==> win7: Waiting 5s for boot...[0m
+[1;32m==> win7: Connecting to VM via VNC[0m
+[1;32m==> win7: Typing the boot command over VNC...[0m
+[1;32m==> win7: Waiting for SSH to become available...[0m
+[1;32m==> win7: Deleting output directory...[0m
+[1;31mBuild 'win7' errored: Build was cancelled.[0m
+Cleanly cancelled builds after being interrupted.

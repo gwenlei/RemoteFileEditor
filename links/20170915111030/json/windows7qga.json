@@ -1,0 +1,35 @@
+{
+    "variables": {
+        "password": "engine",
+        "disk_size": "51200"
+    },
+    "builders": [
+        {
+            "name": "win7",
+	    "vm_name": "Windows7qga.qcow2",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+	    "headless": false,
+	    "output_directory": "links/20170915111030/output2/",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "/home/html/iso/cn_windows_7_ultimate_with_sp1_x64_dvd_618537.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "6625b122837b7f6f38997e23b3eb30cc",
+            "ssh_username": "Administrator",
+            "ssh_password": "engine",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "5s",
+            "floppy_files": [
+                "links/20170915111030/cfg/Autounattend.xml",
+                "links/20170915111030/floppyqga/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "links/20170915111030/floppyqga/common/*",
+                "links/20170915111030/floppyqga/ps/*",
+                "links/20170915111030/floppyqga/qga/*",
+                "links/20170915111030/floppyqga/windows-2012-standard-amd64/*"
+            ]
+
+        }
+    ]
+}

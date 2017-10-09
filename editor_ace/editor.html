@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Remote File Editor</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="/bower_components/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="/editor/editor.css">
+
+<script src="/bower_components/ace/src-noconflict/ace.js"></script>
+<script src="/bower_components/ace/src-noconflict/ext-language_tools.js"></script>
+
+</head>
+<body>
+    <div id="header">
+        <span id="title">[Mode: unknown] File name unknown.</span>
+        <span id="saveIconContainer">
+            <img id="saveIcon" src="/editor/edit_icon.png" alt="SAVE">
+        </span>
+    </div>
+    <pre id="editor"></pre>
+    </div>
+    <script src="/editor/utils.js"></script>
+    <script src="/editor/editor.js"></script>
+</body>
+</html>

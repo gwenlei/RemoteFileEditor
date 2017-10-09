@@ -1,0 +1,8 @@
+  - name: install tomcat6
+    yum: name={{ item }} state=latest
+    with_items:
+      - tomcat6
+      - tomcat6-webapps
+      - tomcat6-admin-webapps
+  - name: restart tomcat6
+    service: name=tomcat6 state=restarted

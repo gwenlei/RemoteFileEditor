@@ -1,0 +1,37 @@
+{
+    "variables": {
+        "password": "SSH_PASSWORD",
+        "disk_size": "DISK_SIZE"
+    },
+    "builders": [
+        {
+      "communicator": "winrm",
+      "winrm_username": "SSH_USERNAME",
+      "winrm_password": "SSH_PASSWORD",
+      "winrm_port":55985,
+      "winrm_timeout": "2h",
+            "qemuargs": [
+               [ "-netdev", "user,id=user.0,hostfwd=tcp::55985-:5985" ]
+             ],
+            "name": "win7",
+	    "vm_name": "VM_NAME",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+	    "headless": HEADLESS,
+	    "output_directory": "OUTPUT_DIRECTORY",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "ISO_URL",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "ISO_CHECKSUM",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "5s",
+            "floppy_files": [
+                "WIN_CFG",
+                "FLOPPYDIR/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "FLOPPYDIR/win7x64/*"
+            ]
+
+        }
+    ]
+}

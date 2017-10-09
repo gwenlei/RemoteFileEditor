@@ -1,0 +1,40 @@
+{
+    "variables": {
+        "password": "SSH_PASSWORD",
+        "disk_size": "DISK_SIZE"
+    },
+    "builders": [
+        {
+	    "vm_name":"VM_NAME",
+            "name": "windows-2008R2",
+	    "output_directory":"OUTPUT_DIRECTORY",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "ISO_URL",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "ISO_CHECKSUM",
+            "ssh_username": "SSH_USERNAME",
+            "ssh_password": "SSH_PASSWORD",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "2s",
+	    "headless":"HEADLESS",
+            "floppy_files": [
+                "WIN_CFG",
+                "FLOPPYDIR/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "FLOPPYDIR/common/*",
+                "FLOPPYDIR/windows-2012-standard-amd64/*"
+            ]
+
+        }
+    ],
+  "post-processors": [
+    {
+      "output": "OUTPUT_DIRECTORYVM_NAME.vhd",
+      "type": "vhd",
+      "keep_input_artifact": true
+    }
+  ]
+}

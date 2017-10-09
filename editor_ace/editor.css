@@ -1,0 +1,43 @@
+html, body {
+    background-color: rgba(150, 72, 96, 1);
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+#header {
+    background-color: rgba(150, 72, 96, 1);
+    color: #FFF;
+    font-size: 20px;
+    height: 60px;
+}
+
+#header span {
+    display: inline-block;
+    padding: 25px;
+}
+
+#title {
+    max-width: calc(100% - 140px);
+}
+
+#saveIconContainer {
+    float: right;
+}
+
+img {
+    height: 24px;
+    -webkit-filter: invert(100%);
+}
+
+#editor {
+    display: block;
+    float: bottom;
+    height: calc(99% - 62px);
+    width: 100%;
+}
+
+.CodeMirror-scroll {
+    height: 1000px;
+    width: 100%;
+}

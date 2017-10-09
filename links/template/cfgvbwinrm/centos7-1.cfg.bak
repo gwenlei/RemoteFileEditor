@@ -1,0 +1,26 @@
+install
+lang en_GB.UTF-8
+keyboard us
+timezone Asia/Shanghai
+auth --useshadow --enablemd5
+selinux --disabled
+firewall --disabled
+services --enabled=NetworkManager,sshd
+eula --agreed
+ignoredisk --only-use=vda
+reboot
+
+bootloader --location=mbr
+zerombr
+clearpart --all --initlabel
+PARTITIONS
+
+rootpw SSH_PASSWORD 
+
+repo --name=base --baseurl=http://192.168.0.79/ks_mirror/CentOS-7.1-x86_64
+url --url="http://192.168.0.79/ks_mirror/CentOS-7.1-x86_64"
+
+%packages --nobase --ignoremissing
+@core
+%end
+
