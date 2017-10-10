@@ -1,0 +1,4 @@
+---
+- hosts: all
+  roles:
+    - rack-roles.docker

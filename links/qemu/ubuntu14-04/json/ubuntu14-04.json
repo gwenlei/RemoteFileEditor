@@ -1,0 +1,54 @@
+{
+    "variables": {
+        "user": "root",
+        "password": "engine"
+    },
+    "builders":
+    [
+        {
+            "vm_name": "Ubuntu14-04.qcow2",
+            "type": "qemu",
+            "format": "qcow2",
+            "output_directory": "static/result/20171010101445/output/",
+            "accelerator": "kvm",
+            "disk_size": 6144,
+            "headless": false,
+            "iso_url":"/home/html/iso/ubuntu-14.04-server-amd64.iso",
+            "iso_checksum": "01545fa976c8367b4f0d59169ac4866c",
+            "iso_checksum_type": "md5",
+            "http_directory": "http",
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "90m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+	    "qemuargs": [
+	       [ "-m", "512M" ]
+	     ],
+            "boot_wait": "2s",
+            "floppy_files": [
+                "static/result/20171010101445/cfg/ubuntu14-04.cfg"
+            ],  
+            "boot_command": [
+                "<esc><esc><enter><wait>",
+                "/install/vmlinuz preseed/file=/floppy/ubuntu14-04.cfg ",
+                "debian-installer=en_US auto locale=en_US kbd-chooser/method=us ",
+                "hostname=localhost ",
+                "keyboard-configuration/modelcode=SKIP ",
+                "keyboard-configuration/layout=USA ",
+                "keyboard-configuration/variant=USA ",
+                "passwd/user-fullname={{user `user`}} ",
+                "passwd/user-password-again={{user `password`}} ",
+                "passwd/user-password={{user `password`}} ",
+                "passwd/username={{user `user`}} ",
+                "initrd=/install/initrd.gz -- <enter>"
+            ]
+        }
+    ]
+,"provisioners": [
+{
+"type": "shell",
+"execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+"scripts": [
+"static/result/20171010101445/script/ansible.sh","static/result/20171010101445/script/qemu-ga.sh"]}
+]
+}

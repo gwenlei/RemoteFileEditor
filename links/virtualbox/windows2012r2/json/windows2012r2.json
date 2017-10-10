@@ -1,0 +1,42 @@
+{
+    "variables": {
+        "password": "engine",
+        "disk_size": "20480"
+    },
+    "builders": [
+        {
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_password": "engine",
+      "winrm_port": "55985",
+      "winrm_timeout": "2h",
+	    "vm_name":"Windows2012r2",
+            "name": "windows-2012R2",
+	    "output_directory":"static/result/20171010102358/output/",
+            "type": "virtualbox-iso",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "/home/html/iso/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_SERVER_EVAL_EN-US-IR3_SSS_X64FREE_EN-US_DV9.ISO",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "5b5e08c490ad16b59b1d9fab0def883a",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "shutdown_timeout": "15m",
+            "boot_wait": "2s",
+	    "headless":"false",
+            "floppy_files": [
+                "static/result/20171010102358/cfg/Autounattend.xml",
+                "static/result/20171010102358/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "static/result/20171010102358/floppywinrm/windows-2012-standard-amd64/*"
+            ],
+      "guest_additions_mode": "disable",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--natpf1", "guest_winrm,tcp,,55985,,5985" ],
+        [ "modifyvm", "{{.Name}}", "--vram", "48" ],
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+      ],
+      "guest_os_type": "Windows2012_64",
+      "hard_drive_interface": "sata"
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+{
+    "variables": {
+        "password": "engine",
+        "disk_size": "20480"
+    },
+    "builders": [
+        {
+            "name": "win7",
+	    "vm_name": "Windows7",
+            "type": "virtualbox-iso",
+	    "headless": false,
+	    "output_directory": "static/result/20171010102309/output/",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "/home/html/iso/cn_windows_7_ultimate_with_sp1_x64_dvd_618537.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "6625b122837b7f6f38997e23b3eb30cc",
+            "ssh_username": "Administrator",
+            "ssh_password": "engine",
+            "ssh_wait_timeout": "60m",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "5s",
+            "floppy_files": [
+                "static/result/20171010102309/cfg/Autounattend.xml",
+                "static/result/20171010102309/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "static/result/20171010102309/floppywinrm/common/*",
+                "static/result/20171010102309/floppywinrm/windows-2012-standard-amd64/*"
+            ],
+      "guest_additions_path":"/home/img/VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+      ],
+      "guest_os_type": "Windows7_64",
+      "hard_drive_interface": "sata"
+        }
+    ]
+}

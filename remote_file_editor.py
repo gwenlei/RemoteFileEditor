@@ -1,10 +1,13 @@
 #! /usr/bin/env python
+# -*- coding: utf-8 -*-   
 import argparse
 import io
 import os
 import packer
 import threading  
-import time 
+import time
+import re 
+import fileinput  
 
 from flask import Flask, Response, request
 
@@ -224,6 +227,58 @@ def make_directory():
         return Response('Directory %s created.' % file_path, 200)
     except OSError as e:
         print '[Error] Delete error: %s' % str(e)
+        return Response(str(e), 500)
+
+
+def copyFiles(sourceDir, targetDir):   
+    copyFileCounts=0
+    print sourceDir
+    print u"%s 当前处理文件夹%s已处理%s 个文件" %(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), sourceDir,copyFileCounts)   
+    for f in os.listdir(sourceDir):
+        sourceF = os.path.join(sourceDir, f)
+        targetF = os.path.join(targetDir, f)
+        if os.path.isfile(sourceF): 
+            #创建目录   
+            if not os.path.exists(targetDir):
+                os.makedirs(targetDir)
+            copyFileCounts += 1
+            #文件不存在，或者存在但是大小不同，覆盖   
+            if not os.path.exists(targetF) or (os.path.exists(targetF) and (os.path.getsize(targetF) != os.path.getsize(sourceF))): 
+                #2进制文件 
+                open(targetF, "wb").write(open(sourceF, "rb").read()) 
+                print u"%s %s 复制完毕" %(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), targetF) 
+            else: 
+                print u"%s %s 已存在，不重复复制" %(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), targetF) 
+        if os.path.isdir(sourceF):   
+            copyFiles(sourceF, targetF)  
+
+def replaceInFile(filename, strFrom, strTo):  
+    for line in fileinput.input(filename, inplace=True):  
+        if re.search(strFrom, line):  
+            line = line.replace(strFrom, strTo)  
+        print line
+
+@app.route('/newjob', methods=['GET'])
+def new_job():
+    builder = request.args['builder']
+    os_type = request.args['os_type']
+    job_time = time.strftime("%Y%m%d%H%M%S",time.localtime())
+    targetDir = r"links/result/%s" % job_time
+    if not check_file_path_validity(targetDir):
+        return Response('Permission denied', 403)
+
+    try:
+        sourceDir = r"links/%s/%s" % (builder,os_type)
+        print 'sourceDir: %s' % sourceDir
+        if not check_file_path_validity(sourceDir):
+            return Response('Permission denied', 403)
+        copyFiles(sourceDir,targetDir) 
+        jsonfile = "%s/json/%s.json" % (targetDir, os_type)
+        print 'jsonfile: %s' % jsonfile
+        replaceInFile(jsonfile,'TIMESTAMP',job_time)
+        return Response('New job %s created.' % targetDir, 200)
+    except OSError as e:
+        print '[Error] New job error: %s' % str(e)
         return Response(str(e), 500)
 
 

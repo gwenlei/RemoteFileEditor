@@ -1,0 +1,37 @@
+{
+    "variables": {
+        "password": "engine",
+        "disk_size": "20480"
+    },
+    "builders": [
+        {
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_password": "engine",
+      "winrm_port":55985,
+      "winrm_timeout": "2h",
+            "qemuargs": [
+               [ "-netdev", "user,id=user.0,hostfwd=tcp::55985-:5985" ]
+             ],
+	    "vm_name":"Windows2008r2.qcow2",
+            "name": "windows-2008R2",
+	    "output_directory":"static/result/20171010094530/output/",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "/home/html/iso/windows2008r2.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "4263be2cf3c59177c45085c0a7bc6ca5",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "2s",
+	    "headless":"false",
+            "floppy_files": [
+                "static/result/20171010094530/cfg/Autounattend.xml",
+                "static/result/20171010094530/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "static/result/20171010094530/floppywinrm/win2008r2x64/*"
+            ]
+
+        }
+    ]
+}

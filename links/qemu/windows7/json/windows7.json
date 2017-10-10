@@ -1,0 +1,37 @@
+{
+    "variables": {
+        "password": "engine",
+        "disk_size": "20480"
+    },
+    "builders": [
+        {
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_password": "engine",
+      "winrm_port":55985,
+      "winrm_timeout": "2h",
+            "qemuargs": [
+               [ "-netdev", "user,id=user.0,hostfwd=tcp::55985-:5985" ]
+             ],
+            "name": "win7",
+	    "vm_name": "Windows7.qcow2",
+            "type": "qemu",
+            "format":"qcow2",
+            "accelerator": "kvm",
+	    "headless": false,
+	    "output_directory": "static/result/20171010101716/output/",
+            "disk_size": "{{ user `disk_size`}}",
+            "iso_url": "/home/html/iso/cn_windows_7_ultimate_with_sp1_x64_dvd_618537.iso",
+            "iso_checksum_type": "md5",
+            "iso_checksum": "6625b122837b7f6f38997e23b3eb30cc",
+            "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+            "boot_wait": "5s",
+            "floppy_files": [
+                "static/result/20171010101716/cfg/Autounattend.xml",
+                "static/result/20171010101716/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "static/result/20171010101716/floppywinrm/win7x64/*"
+            ]
+
+        }
+    ]
+}

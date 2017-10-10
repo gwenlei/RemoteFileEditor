@@ -1,7 +1,0 @@
-  "provisioners": [
-    {
-      "type": "shell",
-      "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
-      "scripts": [SCRIPTFILES]
-    }
-]
