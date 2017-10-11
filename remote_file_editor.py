@@ -3,15 +3,20 @@
 import argparse
 import io
 import os
-import packer
 import threading  
 import time
 import re 
-import fileinput  
+import fileinput 
+import datetime
+import pexpect
+import json
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request, jsonify
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+thread_count = 0
+thread_max = 1
+thread_con = threading.Condition()
 
 app = Flask(__name__)
 
@@ -26,6 +31,14 @@ EXT_TYPE_MAPPING = {
     'js': 'text/javascript',
 }
 
+def store(data):
+    with open('links/jobs.json', 'w') as json_file:
+        json_file.write(json.dumps(data))
+
+def load():
+    with open('links/jobs.json') as json_file:
+        data = json.load(json_file)
+        return data
 
 def get_file_type(file_path):
     ext = os.path.splitext(file_path)[1][1:]
@@ -132,7 +145,7 @@ def list_files(dir_path):
             os.path.join('/', full_path), a_file)
         if os.path.isfile(full_path):
             one_line += (
-                '<a href="/edit?file=%s" target="_blank">open in code editor</a>' %
+                '<a href="/edit?file=%s" target="_blank">edit</a>' %
                 full_path)
             files_list += '<li class="li-file">%s</li>' % one_line
         else:
@@ -231,9 +244,7 @@ def make_directory():
 
 
 def copyFiles(sourceDir, targetDir):   
-    copyFileCounts=0
     print sourceDir
-    print u"%s 当前处理文件夹%s已处理%s 个文件" %(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())), sourceDir,copyFileCounts)   
     for f in os.listdir(sourceDir):
         sourceF = os.path.join(sourceDir, f)
         targetF = os.path.join(targetDir, f)
@@ -241,7 +252,6 @@ def copyFiles(sourceDir, targetDir):
             #创建目录   
             if not os.path.exists(targetDir):
                 os.makedirs(targetDir)
-            copyFileCounts += 1
             #文件不存在，或者存在但是大小不同，覆盖   
             if not os.path.exists(targetF) or (os.path.exists(targetF) and (os.path.getsize(targetF) != os.path.getsize(sourceF))): 
                 #2进制文件 
@@ -276,30 +286,87 @@ def new_job():
         jsonfile = "%s/json/%s.json" % (targetDir, os_type)
         print 'jsonfile: %s' % jsonfile
         replaceInFile(jsonfile,'TIMESTAMP',job_time)
+        job = {
+            "timestamp": job_time,
+            "builder": builder, 
+            "os_type": os_type, 
+            "jsonfile": jsonfile,
+            "status": "job create",
+            "cost_time": 0
+        }
+        jobs.append(job)
+        store(jobs)
         return Response('New job %s created.' % targetDir, 200)
     except OSError as e:
         print '[Error] New job error: %s' % str(e)
         return Response(str(e), 500)
 
+def update_job(timestamp):
+    job = filter(lambda t: t['timestamp'] == timestamp, jobs)
+    if len(job) == 0:
+        return 0
+    if not request.json:
+        return 0
+    if 'title' in request.json and type(request.json['title']) != unicode:
+        abort(400)
+    if 'description' in request.json and type(request.json['description']) is not unicode:
+        abort(400)
+    if 'done' in request.json and type(request.json['done']) is not bool:
+        abort(400)
+    task[0]['title'] = request.json.get('title', task[0]['title'])
+    task[0]['description'] = request.json.get('description', task[0]['description'])
+    task[0]['done'] = request.json.get('done', task[0]['done'])
 
 class packerthread(threading.Thread): 
     def __init__(self, file_path):  
         threading.Thread.__init__(self)  
         self.file_path = file_path  
-        self.thread_stop = False  
+        self.thread_stop = False 
+        self.start_time = datetime.datetime.now()
+        self.stop_time = datetime.datetime.now()
+        self.cost_time = 0
    
-    def run(self): 
-        while not self.thread_stop:  
-            print 'packer file_path:%s\n' %(self.file_path)
-            packerfile = str(self.file_path)
-            print 'packerfile:[%s]\n' %(packerfile)
-            exc = []
-            only = []
-            vars = {}
-            var_file = ''
-            packer_exec_path = '/home/packerdir/packer'
-            p = packer.Packer(packerfile, exc=exc, only=only, vars=vars,var_file=var_file, exec_path=packer_exec_path)
-            p.build(parallel=True, debug=False, force=False)  
+    def run(self):
+        global thread_count
+        job = filter(lambda t: t['jsonfile'] == self.file_path, jobs)
+        if len(job) == 0:
+            print 'packer build not record %s \n' %(file_path)
+            exit(0)
+        if job[0]['status']=="done":
+            print 'packer status done %s \n' %(file_path)
+            exit(0)            
+        if thread_con.acquire():
+            if thread_count >= thread_max:
+                print 'waiting thread_count:[%d]\n' %(thread_count)
+                job[0]['status']="waiting"
+                store(jobs)
+                thread_con.wait()
+        thread_count += 1
+        job[0]['status']="building"
+        store(jobs)
+        thread_con.notify()
+        thread_con.release()
+        packerfile = str(self.file_path)
+        print 'packerfile:[%s]\n' %(packerfile)
+        self.start_time = datetime.datetime.now()
+        self.stop_time = datetime.datetime.now()
+        cmd = "/home/packerdir/packer build %s" % packerfile
+        p = pexpect.spawn(cmd)
+        ret = p.expect([".*?Builds finished*?"], timeout=None)
+        self.stop_time = datetime.datetime.now()
+        self.cost_time = (self.stop_time - self.start_time).seconds
+        if thread_con.acquire():
+            thread_count -= 1
+            thread_con.notify()
+            thread_con.release()
+            job[0]['cost_time']=self.cost_time
+            if ret == 0:
+                job[0]['status']="done"
+                print 'packer build success %s \n' %(packerfile)
+            else:
+                job[0]['status']="error"
+                print 'packer build error %s \n' %(packerfile)
+            store(jobs)
     def stop(self):  
         self.thread_stop = True
 
@@ -311,6 +378,7 @@ def packer_build():
 
     try:
         thread1 = packerthread(file_path) 
+        thread1.setDaemon(True)
         thread1.start() 
         print '[Info] packer build %s' % file_path
         return Response('packer building %s .' % file_path, 200)
@@ -318,8 +386,12 @@ def packer_build():
         print '[Error] packer build error: %s' % str(e)
         return Response(str(e), 500)
 
+@app.route('/jobs', methods=['GET'])
+def get_tasks():
+    return jsonify({'jobs': jobs})
 
 if __name__ == '__main__':
+    jobs = load()
     parser = argparse.ArgumentParser(description='Starts a file editor server.')
     parser.add_argument(
         '-p', '--port', type=int, default=9000, help='the port to start the server on')
