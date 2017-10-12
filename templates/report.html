@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>job report</title>
+<link href="links/css/bootstrap.min.css" rel="stylesheet">
+<script src="links/js/jquery.min.js"></script>
+<script src="links/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+			$.getJSON("/links/jobs.json",function(result){
+                                $.each(result, function(i, field){
+                                        $("#reportb").append("<tr>");
+                                        $("#reportb").append("<td>"+field.timestamp+"</td>");
+                                        $("#reportb").append("<td>"+field.builder+"</td>");
+                                        $("#reportb").append("<td>"+field.os_type+"</td>");
+                                        $("#reportb").append("<td>"+field.status+"</td>");
+                                        $("#reportb").append("<td>"+parseInt(field.cost_time/60)+"m"+field.cost_time%60+"s</td>");
+                                        $("#reportb").append("<a href=\"links/result/"+field.timestamp+"\">view </a>");
+                                        $("#reportb").append("<a href=\"packer?file="+field.jsonfile+"\">build </a>");
+                                        $("#reportb").append("<a href=\"delete?file=links/result/"+field.timestamp+"\">delete</a>");
+                                        $("#reportb").append("</tr>");
+				});
+		});
+});
+</script>
+</head>
+<body>
+</br>
+<table class="table">
+	<caption>job report</caption>
+	<thead>
+		<tr>
+			<th>timestamp</th>
+			<th>builder</th>
+			<th>os_type</th>
+			<th>status</th>
+			<th>cost_time</th>
+			<th>action</th>
+		</tr>
+	</thead>
+	<tbody id="reportb">
+	</tbody>
+</table>
+</form>
+</body>
+</html>			

@@ -7,7 +7,7 @@
         {
 	    "vm_name":"Windows2008r2",
             "name": "windows-2008R2",
-	    "output_directory":"static/result/20171010102235/output/",
+	    "output_directory":"links/result/TIMESTAMP/output/",
             "type": "virtualbox-iso",
             "disk_size": "{{ user `disk_size`}}",
             "iso_url": "/home/html/iso/windows2008r2.iso",
@@ -20,10 +20,10 @@
             "boot_wait": "2s",
 	    "headless":"false",
             "floppy_files": [
-                "static/result/20171010102235/cfg/Autounattend.xml",
-                "static/result/20171010102235/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
-                "static/result/20171010102235/floppywinrm/common/*",
-                "static/result/20171010102235/floppywinrm/windows-2012-standard-amd64/*"
+                "links/result/TIMESTAMP/cfg/Autounattend.xml",
+                "links/result/TIMESTAMP/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "links/result/TIMESTAMP/floppywinrm/common/*",
+                "links/result/TIMESTAMP/floppywinrm/windows-2012-standard-amd64/*"
             ],
       "guest_additions_path":"/home/img/VBoxGuestAdditions_{{.Version}}.iso",
       "virtualbox_version_file": ".vbox_version",

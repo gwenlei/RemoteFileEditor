@@ -9,7 +9,7 @@
             "vm_name": "Ubuntu14-04.qcow2",
             "type": "qemu",
             "format": "qcow2",
-            "output_directory": "static/result/20171010101445/output/",
+            "output_directory": "links/result/TIMESTAMP/output/",
             "accelerator": "kvm",
             "disk_size": 6144,
             "headless": false,
@@ -26,7 +26,7 @@
 	     ],
             "boot_wait": "2s",
             "floppy_files": [
-                "static/result/20171010101445/cfg/ubuntu14-04.cfg"
+                "links/result/TIMESTAMP/cfg/ubuntu14-04.cfg"
             ],  
             "boot_command": [
                 "<esc><esc><enter><wait>",
@@ -49,6 +49,6 @@
 "type": "shell",
 "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
 "scripts": [
-"static/result/20171010101445/script/ansible.sh","static/result/20171010101445/script/qemu-ga.sh"]}
+"links/result/TIMESTAMP/script/ansible.sh","links/result/TIMESTAMP/script/qemu-ga.sh"]}
 ]
 }

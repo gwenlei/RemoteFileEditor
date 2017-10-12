@@ -9,7 +9,7 @@
 	    "vm_name": "Windows7",
             "type": "virtualbox-iso",
 	    "headless": false,
-	    "output_directory": "static/result/20171010102309/output/",
+	    "output_directory": "links/result/TIMESTAMP/output/",
             "disk_size": "{{ user `disk_size`}}",
             "iso_url": "/home/html/iso/cn_windows_7_ultimate_with_sp1_x64_dvd_618537.iso",
             "iso_checksum_type": "md5",
@@ -20,10 +20,10 @@
             "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
             "boot_wait": "5s",
             "floppy_files": [
-                "static/result/20171010102309/cfg/Autounattend.xml",
-                "static/result/20171010102309/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
-                "static/result/20171010102309/floppywinrm/common/*",
-                "static/result/20171010102309/floppywinrm/windows-2012-standard-amd64/*"
+                "links/result/TIMESTAMP/cfg/Autounattend.xml",
+                "links/result/TIMESTAMP/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "links/result/TIMESTAMP/floppywinrm/common/*",
+                "links/result/TIMESTAMP/floppywinrm/windows-2012-standard-amd64/*"
             ],
       "guest_additions_path":"/home/img/VBoxGuestAdditions_{{.Version}}.iso",
       "virtualbox_version_file": ".vbox_version",

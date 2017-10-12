@@ -15,7 +15,7 @@
              ],
 	    "vm_name":"Windows2008r2.qcow2",
             "name": "windows-2008R2",
-	    "output_directory":"static/result/20171010094530/output/",
+	    "output_directory":"links/result/TIMESTAMP/output/",
             "type": "qemu",
             "format":"qcow2",
             "accelerator": "kvm",
@@ -27,9 +27,9 @@
             "boot_wait": "2s",
 	    "headless":"false",
             "floppy_files": [
-                "static/result/20171010094530/cfg/Autounattend.xml",
-                "static/result/20171010094530/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
-                "static/result/20171010094530/floppywinrm/win2008r2x64/*"
+                "links/result/TIMESTAMP/cfg/Autounattend.xml",
+                "links/result/TIMESTAMP/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "links/result/TIMESTAMP/floppywinrm/win2008r2x64/*"
             ]
 
         }

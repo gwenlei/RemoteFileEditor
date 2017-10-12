@@ -10,13 +10,17 @@ import fileinput
 import datetime
 import pexpect
 import json
+import shutil
 
-from flask import Flask, Response, request, jsonify
+from flask import Flask, Response, request, jsonify, request, redirect, url_for, render_template
+from werkzeug import secure_filename
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 thread_count = 0
 thread_max = 1
 thread_con = threading.Condition()
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
 
 app = Flask(__name__)
 
@@ -216,7 +220,7 @@ def delete_file():
 
     try:
         if os.path.isdir(file_path):
-            os.rmdir(file_path)
+            shutil.rmtree(file_path,True)
             print '[Info] Rmdir directory: %s' % file_path
             return Response('Directory %s removed.' % file_path, 200)
         else:
@@ -389,6 +393,35 @@ def packer_build():
 @app.route('/jobs', methods=['GET'])
 def get_tasks():
     return jsonify({'jobs': jobs})
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        folder = request.form['folder']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(folder, filename))
+            return redirect(url_for('upload_file',
+                                    filename=filename))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+      <p>folder: <input type="text" name="folder" /></p>
+      <p><input type=submit value=Upload>
+    </form>
+    '''
+
+@app.route('/report')
+def report():
+    return render_template('report.html')
 
 if __name__ == '__main__':
     jobs = load()

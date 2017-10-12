@@ -12,7 +12,7 @@
             "iso_url":"/home/html/iso/ubuntu-12.04.3-server-amd64.iso",
             "iso_checksum": "2cbe868812a871242cdcdd8f2fd6feb9",
             "iso_checksum_type": "md5",
-	    "output_directory": "static/result/20171010101915/output/",
+	    "output_directory": "links/result/TIMESTAMP/output/",
             "http_directory": "http",
             "ssh_username": "{{user `user`}}",
             "ssh_password": "{{user `password`}}",
@@ -20,7 +20,7 @@
             "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
             "boot_wait": "5s",
             "floppy_files": [
-                "static/result/20171010101915/cfg/ubuntu12-04.cfg"
+                "links/result/TIMESTAMP/cfg/ubuntu12-04.cfg"
             ],  
             "boot_command": [
                 "<esc><esc><enter><wait>",
@@ -50,6 +50,6 @@
 "type": "shell",
 "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
 "scripts": [
-"static/result/20171010101915/script/ansible.sh","static/result/20171010101915/script/qemu-ga.sh"]}
+"links/result/TIMESTAMP/script/ansible.sh","links/result/TIMESTAMP/script/qemu-ga.sh"]}
 ]
 }

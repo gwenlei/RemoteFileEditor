@@ -5,7 +5,7 @@
       "iso_url":"/home/html/iso/CentOS-6.6-x86_64-bin-DVD1.iso",
       "iso_checksum": "7b1fb1a11499b31271ded79da6af8584",
       "iso_checksum_type": "md5",
-      "output_directory": "static/result/20171010095815/output/",
+      "output_directory": "links/result/TIMESTAMP/output/",
       "ssh_wait_timeout": "30s",
       "shutdown_command": "shutdown -P now",
       "disk_size": 6144,
@@ -22,7 +22,7 @@
       "vm_name": "CentOS6-6",
       "boot_wait": "5s",
       "floppy_files": [
-          "static/result/20171010095815/cfg/centos6-6.cfg"
+          "links/result/TIMESTAMP/cfg/centos6-6.cfg"
       ],
       "boot_command":
       [
@@ -41,7 +41,7 @@
 ,
   "post-processors": [
     {
-      "output": "static/result/20171010095815/output/CentOS6-6",
+      "output": "links/result/TIMESTAMP/output/CentOS6-6",
       "type": "vhd",
       "only": ["virtualbox-iso"]
     }
@@ -51,6 +51,6 @@
 "type": "shell",
 "execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
 "scripts": [
-"static/result/20171010095815/script/qemu-ga.sh"]}
+"links/result/TIMESTAMP/script/qemu-ga.sh"]}
 ]
 }

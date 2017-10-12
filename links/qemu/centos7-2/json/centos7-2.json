@@ -6,14 +6,14 @@
       "iso_url":"/home/html/iso/CentOS-7-x86_64-Everything-1511.iso",
       "iso_checksum": "dba29c59117400b111633be2bf2aaf0e",
       "iso_checksum_type": "md5",
-      "output_directory": "static/result/20171010094122/output/",
+      "output_directory": "links/result/TIMESTAMP/output/",
       "ssh_wait_timeout": "30s",
       "shutdown_command": "shutdown -P now",
       "disk_size": 6144,
       "format": "qcow2",
       "headless": false,
       "accelerator": "kvm",
-      "http_directory": "static/result/20171010094122/cfg",
+      "http_directory": "links/result/TIMESTAMP/cfg",
       "http_port_min": 10082,
       "http_port_max": 10089,
       "ssh_host_port_min": 2222,
@@ -29,7 +29,7 @@
          [ "-m", "1024M" ]
       ],
       "floppy_files": [
-          "static/result/20171010094122/cfg/centos7-2.cfg"
+          "links/result/TIMESTAMP/cfg/centos7-2.cfg"
       ],
       "boot_wait": "5s",
       "boot_command":

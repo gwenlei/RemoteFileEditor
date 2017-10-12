@@ -8,7 +8,7 @@
         {
             "vm_name": "Ubuntu14-04desktop",
             "type": "virtualbox-iso",
-            "output_directory": "static/result/20171010102129/output/",
+            "output_directory": "links/result/TIMESTAMP/output/",
             "disk_size": 6144,
             "headless": false,
             "iso_url":"/home/html/iso/ubuntu-14.04-desktop-amd64.iso",
@@ -21,7 +21,7 @@
             "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
             "boot_wait": "5s",
             "floppy_files": [
-                "static/result/20171010102129/cfg/ubuntu14-04desktop.cfg"
+                "links/result/TIMESTAMP/cfg/ubuntu14-04desktop.cfg"
             ],  
             "boot_command": [
                 "<esc><esc><enter><wait>",

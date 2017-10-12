@@ -15,7 +15,7 @@
              ],
 	    "vm_name":"Windows2012r2.qcow2",
             "name": "windows-2012R2",
-	    "output_directory":"static/result/20171010094701/output/",
+	    "output_directory":"links/result/TIMESTAMP/output/",
             "type": "qemu",
             "format":"qcow2",
             "accelerator": "kvm",
@@ -27,9 +27,9 @@
             "boot_wait": "2s",
 	    "headless":"false",
             "floppy_files": [
-                "static/result/20171010094701/cfg/Autounattend.xml",
-                "static/result/20171010094701/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
-                "static/result/20171010094701/floppywinrm/windows-2012-standard-amd64/*"
+                "links/result/TIMESTAMP/cfg/Autounattend.xml",
+                "links/result/TIMESTAMP/floppywinrm/drivers/virtio-win-0.1-81/WIN7/AMD64/*",
+                "links/result/TIMESTAMP/floppywinrm/windows-2012-standard-amd64/*"
             ]
 
         }
