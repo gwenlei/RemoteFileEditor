@@ -49,7 +49,7 @@ def get_file_type(file_path):
     return EXT_TYPE_MAPPING.get(ext, 'text')
 
 
-@app.route('/', methods=['GET'])
+@app.route('/list', methods=['GET'])
 def homepage():
     return serve_file('./')
 
@@ -419,9 +419,36 @@ def upload_file():
     </form>
     '''
 
-@app.route('/report')
+@app.route('/')
 def report():
     return render_template('report.html')
+
+@app.route('/clean', methods=['GET'])
+def clean():
+    timestamp = request.args['file']
+    print 'len(jobs) %d \n' %(len(jobs))
+    for i in range(len(jobs)):
+        if jobs[i]['timestamp'] == timestamp:
+            print 'clean job %s \n' %(jobs[i])
+            del jobs[i]
+            store(jobs)
+            break
+    file_path = 'links/result/%s' % timestamp
+    if not check_file_path_validity(file_path):
+        return Response('Permission denied', 403)
+
+    try:
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path,True)
+            print '[Info] Rmdir directory: %s' % file_path
+            return Response('Directory %s removed.' % file_path, 200)
+        else:
+            os.remove(file_path)
+            print '[Info] Delete file: %s' % file_path
+            return Response('File %s deleted' % file_path, 200)
+    except OSError as e:
+        print '[Error] Delete error: %s' % str(e)
+        return Response(str(e), 500)
 
 if __name__ == '__main__':
     jobs = load()

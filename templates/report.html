@@ -17,7 +17,7 @@ $(document).ready(function(){
                                         $("#reportb").append("<td>"+parseInt(field.cost_time/60)+"m"+field.cost_time%60+"s</td>");
                                         $("#reportb").append("<a href=\"links/result/"+field.timestamp+"\">view </a>");
                                         $("#reportb").append("<a href=\"packer?file="+field.jsonfile+"\">build </a>");
-                                        $("#reportb").append("<a href=\"delete?file=links/result/"+field.timestamp+"\">delete</a>");
+                                        $("#reportb").append("<a href=\"clean?file="+field.timestamp+"\">delete</a>");
                                         $("#reportb").append("</tr>");
 				});
 		});
@@ -25,9 +25,36 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
+
+<form class="form-horizontal"  action="/newjob" method="get">
+<table class="table">
+	<thead>
+		<tr>
+			<th><select class="form-control"  id="builder" name="builder" >
+                                                <option value="qemu">qemu</option>
+                                                <option value="virtualbox">virtualbox</option>
+                                                </select></th>
+			<th><select class="form-control"  id="os_type" name="os_type" >
+                                                <option value="centos6-6">centos6-6</option>
+                                                <option value="centos7-2">centos7-2</option>
+                                                <option value="opensuse13-2">opensuse13-2</option>
+                                                <option value="ubuntu12-04">ubuntu12-04</option>
+                                                <option value="ubuntu14-04">ubuntu14-04</option>
+                                                <option value="ubuntu16-04">ubuntu16-04</option>
+                                                <option value="windows7">windows7</option>
+                                                <option value="windows2008r2">windows2008r2</option>
+                                                <option value="windows2012r2">windows2012r2</option>
+						</select></th>
+                        <th><button type="submit" class="btn btn-default">new job</button>
+                        <th> </th>
+		</tr>
+	</thead>
+</table>
+
+
+
 </br>
 <table class="table">
-	<caption>job report</caption>
 	<thead>
 		<tr>
 			<th>timestamp</th>
