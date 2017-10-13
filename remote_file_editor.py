@@ -345,10 +345,10 @@ class packerthread(threading.Thread):
                 job[0]['status']="waiting"
                 store(jobs)
                 thread_con.wait()
+                time.sleep(60)
         thread_count += 1
         job[0]['status']="building"
         store(jobs)
-        thread_con.notify()
         thread_con.release()
         packerfile = str(self.file_path)
         print 'packerfile:[%s]\n' %(packerfile)
@@ -356,13 +356,10 @@ class packerthread(threading.Thread):
         self.stop_time = datetime.datetime.now()
         cmd = "/home/packerdir/packer build %s" % packerfile
         p = pexpect.spawn(cmd)
-        ret = p.expect([".*?Builds finished*?"], timeout=None)
-        self.stop_time = datetime.datetime.now()
-        self.cost_time = (self.stop_time - self.start_time).seconds
-        if thread_con.acquire():
-            thread_count -= 1
-            thread_con.notify()
-            thread_con.release()
+        fout = file('%s.log' % packerfile,'w')
+        p.logfile = fout
+        try:
+            ret = p.expect([".*?Builds finished*?"], timeout=None)
             job[0]['cost_time']=self.cost_time
             if ret == 0:
                 job[0]['status']="done"
@@ -371,6 +368,16 @@ class packerthread(threading.Thread):
                 job[0]['status']="error"
                 print 'packer build error %s \n' %(packerfile)
             store(jobs)
+        except pexpect.EOF:
+            print 'packer build EOF %s \n' %(packerfile)
+            job[0]['status']="error"
+            store(jobs)
+        self.stop_time = datetime.datetime.now()
+        self.cost_time = (self.stop_time - self.start_time).seconds
+        if thread_con.acquire():
+            thread_count -= 1
+            thread_con.notify()
+            thread_con.release()
     def stop(self):  
         self.thread_stop = True
 
