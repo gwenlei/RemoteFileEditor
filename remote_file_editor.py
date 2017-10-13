@@ -340,7 +340,7 @@ class packerthread(threading.Thread):
             print 'packer status done %s \n' %(file_path)
             exit(0)            
         if thread_con.acquire():
-            if thread_count >= thread_max:
+            while thread_count >= thread_max:
                 print 'waiting thread_count:[%d]\n' %(thread_count)
                 job[0]['status']="waiting"
                 store(jobs)
