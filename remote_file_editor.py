@@ -289,15 +289,12 @@ def new_job():
         jsonfile = "%s/json/%s.json" % (targetDir, os_type)
         print 'jsonfile: %s' % jsonfile
         replaceInFile(jsonfile,'TIMESTAMP',job_time)
-        job = {
-            "timestamp": job_time,
+        jobs[job_time]= {
             "builder": builder, 
             "os_type": os_type, 
             "jsonfile": jsonfile,
             "status": "job create",
-            "cost_time": 0
-        }
-        jobs.append(job)
+            "cost_time": 0}
         return Response('New job %s created.' % targetDir, 200)
     except OSError as e:
         print '[Error] New job error: %s' % str(e)
@@ -308,10 +305,10 @@ def manager():
     while True:
         store(jobs)
         time.sleep(10)
-        for i in range(len(jobs)):
-            if jobs[i]['status'] == "waiting":
-                print 'start job %s \n' %(jobs[i])
-                t =threading.Thread(target=runpacker,args=(jobs[i]['jsonfile'],))
+        for (k, v) in jobs.items():
+            if jobs[k]['status'] == "waiting":
+                print 'start job %s \n' %(jobs[k])
+                t =threading.Thread(target=runpacker,args=(jobs[k]['jsonfile'],))
                 t.start()
                 t.join()
                 break
@@ -319,18 +316,18 @@ def manager():
 def runpacker(file_path):
     global jobs
     print 'runpacker:[%s]\n' %(file_path)
-    for i in range(len(jobs)):
-        if jobs[i]['jsonfile'] == file_path: break
-    if i >= len(jobs):
+    for (k, v) in jobs.items():
+        if jobs[k]['jsonfile'] == file_path: break
+    if jobs[k]['jsonfile'] != file_path:
         print 'job not record %s \n' %(file_path)
         exit(0)
-    if jobs[i]['status']=="done":
+    if jobs[k]['status']=="done":
         print 'job done %s \n' %(file_path)
         exit(0)            
     if not check_file_path_validity(file_path):
-        jobs[i]['status']="error"
+        jobs[k]['status']="error"
         exit(0)            
-    jobs[i]['status']="building"
+    jobs[k]['status']="building"
     start_time = datetime.datetime.now()
     stop_time = datetime.datetime.now()
     cmd = "/home/packerdir/packer build %s" % file_path
@@ -340,17 +337,17 @@ def runpacker(file_path):
     try:
         ret = p.expect([".*?Builds finished. The artifacts of successful builds are:*?"], timeout=None)
         if ret == 0:
-            jobs[i]['status']="done"
+            jobs[k]['status']="done"
             print 'packer build success %s \n' %(file_path)
         else:
-            jobs[i]['status']="error"
+            jobs[k]['status']="error"
             print 'packer build error %s \n' %(file_path)
     except pexpect.EOF:
         print 'packer build EOF %s \n' %(file_path)
-        jobs[i]['status']="error"
+        jobs[k]['status']="error"
     stop_time = datetime.datetime.now()
     cost_time = (stop_time - start_time).seconds
-    jobs[i]['cost_time']=cost_time
+    jobs[k]['cost_time']=cost_time
 
 
 @app.route('/packer', methods=['GET'])
@@ -361,15 +358,14 @@ def packer_build():
         return Response('Permission denied', 403)
 
     try:
-        for i in range(len(jobs)):
-            if jobs[i]['jsonfile'] == file_path: break
-        if i >= len(jobs):
-            print 'job not record %s \n' %(file_path)
-            jobs[i]['status']="error"
-            exit(0)
-        jobs[i]['status']="waiting"
-        print '[Info] job start %s' % file_path
-        return Response('job start %s .' % file_path, 200)
+        for (k, v) in jobs.items():
+            if jobs[k]['jsonfile'] == file_path: 
+                jobs[k]['status']="waiting"
+                print '[Info] job start %s' % file_path
+                return Response('job start %s .' % file_path, 200)
+        print 'job not record %s \n' %(file_path)
+        jobs[k]['status']="error"
+        return Response('job not record %s .' % file_path, 200)
     except OSError as e:
         print '[Error] packer build error: %s' % str(e)
         return Response(str(e), 500)
@@ -414,12 +410,7 @@ def report():
 def clean():
     global jobs
     timestamp = request.args['file']
-    print 'len(jobs) %d \n' %(len(jobs))
-    for i in range(len(jobs)):
-        if jobs[i]['timestamp'] == timestamp:
-            print 'clean job %s \n' %(jobs[i])
-            del jobs[i]
-            break
+    del(jobs[timestamp])
     file_path = 'links/result/%s' % timestamp
     if not check_file_path_validity(file_path):
         return Response('Permission denied', 403)

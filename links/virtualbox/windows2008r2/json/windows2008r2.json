@@ -25,7 +25,7 @@
                 "links/result/TIMESTAMP/floppywinrm/common/*",
                 "links/result/TIMESTAMP/floppywinrm/windows-2012-standard-amd64/*"
             ],
-      "guest_additions_path":"/home/img/VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_mode": "disable",
       "virtualbox_version_file": ".vbox_version",
       "vboxmanage": [
         [ "modifyvm", "{{.Name}}", "--memory", "2048" ],

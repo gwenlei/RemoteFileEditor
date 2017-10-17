@@ -9,14 +9,14 @@ $(document).ready(function(){
 			$.getJSON("/links/jobs.json",function(result){
                                 $.each(result, function(i, field){
                                         $("#reportb").append("<tr>");
-                                        $("#reportb").append("<td>"+field.timestamp+"</td>");
+                                        $("#reportb").append("<td>"+i+"</td>");
                                         $("#reportb").append("<td>"+field.builder+"</td>");
                                         $("#reportb").append("<td>"+field.os_type+"</td>");
                                         $("#reportb").append("<td>"+field.status+"</td>");
                                         $("#reportb").append("<td>"+parseInt(field.cost_time/60)+"m"+field.cost_time%60+"s</td>");
-                                        $("#reportb").append("<a href=\"links/result/"+field.timestamp+"\">view </a>");
+                                        $("#reportb").append("<a href=\"links/result/"+i+"\">view </a>");
                                         $("#reportb").append("<a href=\"packer?file="+field.jsonfile+"\">build </a>");
-                                        $("#reportb").append("<a href=\"clean?file="+field.timestamp+"\">delete</a>");
+                                        $("#reportb").append("<a href=\"clean?file="+i+"\">delete</a>");
                                         $("#reportb").append("</tr>");
 				});
 		});

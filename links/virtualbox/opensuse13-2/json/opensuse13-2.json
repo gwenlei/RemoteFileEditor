@@ -1,0 +1,45 @@
+{
+  "builders":
+  [
+    {
+      "type": "virtualbox-iso",
+      "iso_url":"/home/html/iso/openSUSE-13.2-DVD-x86_64.iso",
+      "iso_checksum": "350b8cb014a4e342cc9a7cc9df891b99",
+      "iso_checksum_type": "md5",
+      "output_directory": "links/result/TIMESTAMP/output/",
+      "ssh_wait_timeout": "30s",
+      "shutdown_command": "sed -i \"s/vmlinuz.*/& net.ifnames=0/g\" /boot/grub2/grub.cfg && shutdown -P now",
+      "disk_size": 6144,
+      "headless": false,
+      "http_directory": "httpdir",
+      "http_port_min": 10082,
+      "http_port_max": 10089,
+      "ssh_host_port_min": 2222,
+      "ssh_host_port_max": 2229,
+      "ssh_username": "root",
+      "ssh_password": "engine",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "90m",
+      "vm_name": "OpenSuse13-2",
+      "boot_wait": "10s",
+      "floppy_files": [
+          "links/result/TIMESTAMP/cfg/autoinst.xml"
+      ],  
+      "boot_command":
+      [
+       "<esc><enter><wait>",
+       "linux autoyast=floppy ",
+       "netsetup=dhcp lang=en_US hostname=localhost netdevice=eth0 ",
+       " textmode=1 insecure=1<wait><enter><wait>"
+      ],
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "2048" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "2" ]
+      ],
+      "guest_os_type": "OpenSUSE_64",
+      "hard_drive_interface": "sata"
+    }
+  ]
+
+}
+

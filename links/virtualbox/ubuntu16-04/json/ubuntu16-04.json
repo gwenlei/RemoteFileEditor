@@ -1,0 +1,70 @@
+{
+    "variables": {
+        "user": "root",
+        "password": "engine"
+    },
+    "builders":
+    [
+        {
+            "vm_name": "Ubuntu16-04",
+            "type": "virtualbox-iso",
+            "output_directory": "links/result/TIMESTAMP/output/",
+            "disk_size": 6144,
+            "headless": false,
+            "iso_url":"/home/html/iso/ubuntu-16.04-server-amd64.iso",
+            "iso_checksum": "23e97cd5d4145d4105fbf29878534049",
+            "iso_checksum_type": "md5",
+            "http_directory": "links/result/TIMESTAMP/cfg",
+            "ssh_username": "{{user `user`}}",
+            "ssh_password": "{{user `password`}}",
+            "ssh_wait_timeout": "90m",
+            "shutdown_command": "echo '{{user `password`}}'|sudo -S shutdown -P now",
+            "boot_wait": "2s",
+            "boot_command": [
+        "<enter><wait><f6><esc><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "/install/vmlinuz<wait>",
+        " auto<wait>",
+        " console-setup/ask_detect=false<wait>",
+        " console-setup/layoutcode=us<wait>",
+        " console-setup/modelcode=pc105<wait>",
+        " debconf/frontend=noninteractive<wait>",
+        " debian-installer=en_US.UTF-8<wait>",
+        " fb=false<wait>",
+        " initrd=/install/initrd.gz<wait>",
+        " kbd-chooser/method=us<wait>",
+        " keyboard-configuration/layout=USA<wait>",
+        " keyboard-configuration/variant=USA<wait>",
+        " locale=en_US.UTF-8<wait>",
+        " netcfg/get_domain=vm<wait>",
+        " netcfg/get_hostname=localhost<wait>",
+        " grub-installer/bootdev=/dev/vda<wait>",
+        " noapic<wait>",
+        " net.ifnames=0 ",
+        " preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ubuntu16-04.cfg",
+        " -- <wait>",
+        "<enter><wait>"
+            ],
+      "virtualbox_version_file": ".vbox_version",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ]
+      ],
+      "guest_os_type": "Ubuntu_64",
+      "hard_drive_interface": "sata"
+        }
+    ]
+,"provisioners": [
+{
+"type": "shell",
+"execute_command": "echo 'SSH_PASSWORD' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+"scripts": [
+"links/result/TIMESTAMP/script/ansible.sh","links/result/TIMESTAMP/script/qemu-ga.sh"]}
+,{
+"type": "ansible-local",
+"playbook_file": "links/result/TIMESTAMP/ansible/main.yml",
+"role_paths": [
+"/etc/ansible/roles/rack-roles.docker"]}]
+}
