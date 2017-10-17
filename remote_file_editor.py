@@ -11,16 +11,14 @@ import datetime
 import pexpect
 import json
 import shutil
+import multiprocessing
+import threading
 
 from flask import Flask, Response, request, jsonify, request, redirect, url_for, render_template
 from werkzeug import secure_filename
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-thread_count = 0
-thread_max = 1
-thread_con = threading.Condition()
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-
 
 app = Flask(__name__)
 
@@ -274,6 +272,7 @@ def replaceInFile(filename, strFrom, strTo):
 
 @app.route('/newjob', methods=['GET'])
 def new_job():
+    global jobs
     builder = request.args['builder']
     os_type = request.args['os_type']
     job_time = time.strftime("%Y%m%d%H%M%S",time.localtime())
@@ -299,106 +298,85 @@ def new_job():
             "cost_time": 0
         }
         jobs.append(job)
-        store(jobs)
         return Response('New job %s created.' % targetDir, 200)
     except OSError as e:
         print '[Error] New job error: %s' % str(e)
         return Response(str(e), 500)
 
-def update_job(timestamp):
-    job = filter(lambda t: t['timestamp'] == timestamp, jobs)
-    if len(job) == 0:
-        return 0
-    if not request.json:
-        return 0
-    if 'title' in request.json and type(request.json['title']) != unicode:
-        abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
-        abort(400)
-    if 'done' in request.json and type(request.json['done']) is not bool:
-        abort(400)
-    task[0]['title'] = request.json.get('title', task[0]['title'])
-    task[0]['description'] = request.json.get('description', task[0]['description'])
-    task[0]['done'] = request.json.get('done', task[0]['done'])
-
-class packerthread(threading.Thread): 
-    def __init__(self, file_path):  
-        threading.Thread.__init__(self)  
-        self.file_path = file_path  
-        self.thread_stop = False 
-        self.start_time = datetime.datetime.now()
-        self.stop_time = datetime.datetime.now()
-        self.cost_time = 0
-   
-    def run(self):
-        global thread_count
-        job = filter(lambda t: t['jsonfile'] == self.file_path, jobs)
-        if len(job) == 0:
-            print 'packer build not record %s \n' %(file_path)
-            exit(0)
-        if job[0]['status']=="done":
-            print 'packer status done %s \n' %(file_path)
-            exit(0)            
-        if thread_con.acquire():
-            while thread_count >= thread_max:
-                print 'waiting thread_count:[%d]\n' %(thread_count)
-                job[0]['status']="waiting"
-                store(jobs)
-                thread_con.wait()
-                time.sleep(60)
-        thread_count += 1
-        job[0]['status']="building"
+def manager():
+    global jobs
+    while True:
         store(jobs)
-        thread_con.release()
-        packerfile = str(self.file_path)
-        print 'packerfile:[%s]\n' %(packerfile)
-        self.start_time = datetime.datetime.now()
-        self.stop_time = datetime.datetime.now()
-        cmd = "/home/packerdir/packer build %s" % packerfile
-        p = pexpect.spawn(cmd)
-        fout = file('%s.log' % packerfile,'w')
-        p.logfile = fout
-        try:
-            ret = p.expect([".*?Builds finished*?"], timeout=None)
-            job[0]['cost_time']=self.cost_time
-            if ret == 0:
-                job[0]['status']="done"
-                print 'packer build success %s \n' %(packerfile)
-            else:
-                job[0]['status']="error"
-                print 'packer build error %s \n' %(packerfile)
-            store(jobs)
-        except pexpect.EOF:
-            print 'packer build EOF %s \n' %(packerfile)
-            job[0]['status']="error"
-            store(jobs)
-        self.stop_time = datetime.datetime.now()
-        self.cost_time = (self.stop_time - self.start_time).seconds
-        if thread_con.acquire():
-            thread_count -= 1
-            thread_con.notify()
-            thread_con.release()
-    def stop(self):  
-        self.thread_stop = True
+        time.sleep(10)
+        for i in range(len(jobs)):
+            if jobs[i]['status'] == "waiting":
+                print 'start job %s \n' %(jobs[i])
+                t =threading.Thread(target=runpacker,args=(jobs[i]['jsonfile'],))
+                t.start()
+                t.join()
+                break
+
+def runpacker(file_path):
+    global jobs
+    print 'runpacker:[%s]\n' %(file_path)
+    for i in range(len(jobs)):
+        if jobs[i]['jsonfile'] == file_path: break
+    if i >= len(jobs):
+        print 'job not record %s \n' %(file_path)
+        exit(0)
+    if jobs[i]['status']=="done":
+        print 'job done %s \n' %(file_path)
+        exit(0)            
+    if not check_file_path_validity(file_path):
+        jobs[i]['status']="error"
+        exit(0)            
+    jobs[i]['status']="building"
+    start_time = datetime.datetime.now()
+    stop_time = datetime.datetime.now()
+    cmd = "/home/packerdir/packer build %s" % file_path
+    p = pexpect.spawn(cmd)
+    fout = file('%s.log' % file_path,'w')
+    p.logfile = fout
+    try:
+        ret = p.expect([".*?Builds finished. The artifacts of successful builds are:*?"], timeout=None)
+        if ret == 0:
+            jobs[i]['status']="done"
+            print 'packer build success %s \n' %(file_path)
+        else:
+            jobs[i]['status']="error"
+            print 'packer build error %s \n' %(file_path)
+    except pexpect.EOF:
+        print 'packer build EOF %s \n' %(file_path)
+        jobs[i]['status']="error"
+    stop_time = datetime.datetime.now()
+    cost_time = (stop_time - start_time).seconds
+    jobs[i]['cost_time']=cost_time
+
 
 @app.route('/packer', methods=['GET'])
 def packer_build():
+    global jobs
     file_path = request.args['file']
     if not check_file_path_validity(file_path):
         return Response('Permission denied', 403)
 
     try:
-        thread1 = packerthread(file_path) 
-        thread1.setDaemon(True)
-        thread1.start() 
-        print '[Info] packer build %s' % file_path
-        return Response('packer building %s .' % file_path, 200)
+        for i in range(len(jobs)):
+            if jobs[i]['jsonfile'] == file_path: break
+        if i >= len(jobs):
+            print 'job not record %s \n' %(file_path)
+            jobs[i]['status']="error"
+            exit(0)
+        jobs[i]['status']="waiting"
+        print '[Info] job start %s' % file_path
+        return Response('job start %s .' % file_path, 200)
     except OSError as e:
         print '[Error] packer build error: %s' % str(e)
         return Response(str(e), 500)
 
 @app.route('/jobs', methods=['GET'])
 def get_tasks():
+    global jobs
     return jsonify({'jobs': jobs})
 
 def allowed_file(filename):
@@ -428,17 +406,19 @@ def upload_file():
 
 @app.route('/')
 def report():
+    global jobs
+    store(jobs)
     return render_template('report.html')
 
 @app.route('/clean', methods=['GET'])
 def clean():
+    global jobs
     timestamp = request.args['file']
     print 'len(jobs) %d \n' %(len(jobs))
     for i in range(len(jobs)):
         if jobs[i]['timestamp'] == timestamp:
             print 'clean job %s \n' %(jobs[i])
             del jobs[i]
-            store(jobs)
             break
     file_path = 'links/result/%s' % timestamp
     if not check_file_path_validity(file_path):
@@ -457,8 +437,13 @@ def clean():
         print '[Error] Delete error: %s' % str(e)
         return Response(str(e), 500)
 
+
 if __name__ == '__main__':
-    jobs = load()
+    global jobs
+    jobs=load()
+    d = threading.Thread(target=manager)
+    d.daemon = True
+    d.start()
     parser = argparse.ArgumentParser(description='Starts a file editor server.')
     parser.add_argument(
         '-p', '--port', type=int, default=9000, help='the port to start the server on')
